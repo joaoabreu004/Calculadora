@@ -14,6 +14,32 @@ class Calculator{
         this.clear(); 
     }
 
+    formatarNumero(number){
+        const stringNumber = number.toString(); 
+        const digitosInteiros = parseFloat(stringNumber.split('.')[0]); 
+        const digitosDecimais = stringNumber.split('.')[1]; 
+        let numeroTela; 
+
+        if(isNaN(digitosInteiros)){
+            numeroTela = ""
+        }else {
+            numeroTela = digitosInteiros.toLocaleString("en", {
+                maximumFractionDigits: 0, 
+            }); 
+        }
+
+        if(digitosDecimais != null){
+            return `${numeroTela}.${digitosDecimais}`
+        }else{
+            return numeroTela;
+        }
+    }
+
+
+    deletar(){
+        this.resulAtualOperacao = this.resulAtualOperacao.toString().slice(0, -1)
+    }
+
     calculate(){
         let result; 
         const resulPrevioOperacaoFloat = parseFloat(this.resulPrevioOperacao);  
@@ -28,12 +54,13 @@ class Calculator{
                 break; 
             case '-': 
                 result = resulPrevioOperacaoFloat - resulAtualOperacaoFloat;
+                break;
+            case '÷':  
+                result = resulPrevioOperacaoFloat / resulAtualOperacaoFloat;
                 break;  
             case '*':
                 result = resulPrevioOperacaoFloat * resulAtualOperacaoFloat; 
                 break;
-            case '÷':  
-                result = resulAtualOperacaoFloat / resulPrevioOperacaoFloat;
             default: 
                 return;                
         }   
@@ -48,6 +75,8 @@ class Calculator{
         if(this.operation != ""){
             this.calculate();
         }
+
+        if(this.resulAtualOperacao == "") return; 
 
         this.operation = operacao; 
         this.resulPrevioOperacao = this.resulAtualOperacao; 
@@ -72,7 +101,7 @@ class Calculator{
     }
     
     updateTela(){
-        this.resulAtual.innerText = this.resulAtualOperacao;
+        this.resulAtual.innerText = this.formatarNumero(this.resulAtualOperacao);
         this.resulPrevio.innerText = `${this.resulPrevioOperacao} ${this.operation || ""}`;
     }
 }
@@ -88,6 +117,11 @@ clearBotao.addEventListener('click', () => {
 
 equalsBotao.addEventListener('click', () => {
     calculator.calculate(); 
+    calculator.updateTela();
+})
+
+deletarBotao.addEventListener('click', () => {
+    calculator.deletar(); 
     calculator.updateTela();
 })
 
